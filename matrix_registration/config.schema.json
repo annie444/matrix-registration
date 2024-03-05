@@ -41,6 +41,76 @@
         }
       ]
     },
+    "memcached": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "options": {
+          "type": [
+            "null",
+            "object"
+          ]
+        }
+      }
+    },
+    "redis": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "options": {
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "strategy": {
+          "type": [
+            "null",
+            "string"
+          ],
+          "enum": [
+            "fixed-window",
+            "moving-window",
+            null
+          ]
+        }
+      }
+    },
+    "mongodb": {
+      "type": [
+        "null",
+        "object"
+      ],
+      "properties": {
+        "uri": {
+          "type": "string"
+        },
+        "options": {
+          "type": [
+            "null",
+            "object"
+          ]
+        },
+        "strategy": {
+          "type": "string",
+          "enum": [
+            "fixed-window",
+            "moving-window",
+            null
+          ]
+        }
+      }
+    },
     "rate_limit": {
       "type": "array",
       "items": {

@@ -78,7 +78,7 @@ class Config:
         except yaml.YAMLError as e:
             sys.exit("Invalid YAML Syntax\n\nTraceback:\n" + str(e))
         except IOError as e:
-            sys.exit(e)
+            sys.exit(str(e))
 
         if not options:
             sys.exit("could not read file")
@@ -97,11 +97,11 @@ class Config:
             for line in file:
                 try:
                     k, v = line.lower().split("=")
+                    setattr(self, k.strip(), v.strip())
                 except NameError:
                     logger.error(
                         f'secret "{line}" in wrong format, please use "key=value"'
                     )
-                setattr(self, k.strip(), v.strip())
 
     def check_config_locations(self):
         """
@@ -141,8 +141,9 @@ class Config:
         """
         logger.debug("applying options...")
         # recusively set dictionary to class properties
-        for k, v in self.data.items():
-            setattr(self, k, v)
+        if self.data is not None:
+            for k, v in self.data.items():
+                setattr(self, k, v)
 
     def ask_for_options(self, sample_options):
         """
@@ -163,14 +164,6 @@ class Config:
 
         return sample_options
 
-        # write to config file
-        directory = os.path.dirname(os.path.realpath(self.path))
-        new_path = f"{directory}/{CONFIG_NAME}"
-        with open(new_path, "w") as stream:
-            yaml.dump(self.data, stream, default_flow_style=False)
-            print(f'config file written to "{os.path.relpath(new_path)}"')
-            print()
-
     def update(self, data):
         """
         resets all options and loads the new config
@@ -189,4 +182,4 @@ class Config:
         logger.debug("config updated!")
 
 
-config = None
+config = Config()

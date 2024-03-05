@@ -8,6 +8,7 @@ client_logo: 'static/images/element-logo.png' # use '{cwd}' for current working 
 db: 'sqlite:///{cwd}/db.sqlite3'
 host: 'localhost'
 port: 5000
+
 rate_limit: ["100 per day", "10 per minute"]
 allow_cors: false
 ip_logging: false
