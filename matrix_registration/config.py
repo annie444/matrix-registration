@@ -118,7 +118,7 @@ class Config:
         # check possible locations for config file
         for directory in CONFIG_DIRS:
             logger.debug(f"checking {directory} ...")
-            path = directory + CONFIG_SAMPLE_NAME
+            path = directory + CONFIG_NAME
             if os.path.isfile(path):
                 self.path = path
                 self.default = False
@@ -127,8 +127,8 @@ class Config:
         # no config exists, use sample config instead
         # check typical installation dirs for sample configs
         for directory in CONFIG_DIRS:
-            path = directory + CONFIG_SAMPLE_NAME
-            if os.path.isfile(directory + CONFIG_SAMPLE_NAME):
+            path = directory + CONFIG_NAME
+            if os.path.isfile(directory + CONFIG_NAME):
                 self.path = path
                 self.config_exists = True
                 return True
