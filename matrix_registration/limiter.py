@@ -20,17 +20,18 @@ def get_limiter() -> Limiter:
         "app": None,
     }
 
-    if config.config.memcached is not None and config.config.memcached.uri is not None and config.config.memcached.uri != "":
+
+    if hasattr(config.config, "memcached") and config.config.memcached is not None and config.config.memcached.uri is not None and config.config.memcached.uri != "":
         kwargs["storage_uri"] = config.config.memcached.uri
         if config.config.memcached.options is not None:
             kwargs["storage_options"] = config.config.memcached.options
-    elif config.config.redis is not None and config.config.redis.uri is not None and config.config.redis.uri != "":
+    elif hasattr(config.config, "redis") and config.config.redis is not None and config.config.redis.uri is not None and config.config.redis.uri != "":
         kwargs["storage_uri"] = config.config.redis.uri
         if config.config.redis.options is not None:
            kwargs["storage_options"] = config.config.redis.options
         if config.config.redis.strategy is not None:
             kwargs["strategy"] = config.config.redis.strategy
-    elif config.config.mongodb is not None and config.config.mongodb.uri is not None and config.config.mongodb.uri != "":
+    elif hasattr(config.config, "mongodb") and config.config.mongodb is not None and config.config.mongodb.uri is not None and config.config.mongodb.uri != "":
         kwargs["storage_uri"] = config.config.mongodb.uri
         if config.config.mongodb.options is not None:
            kwargs["storage_options"] = config.config.mongodb.options
