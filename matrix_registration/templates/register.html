@@ -260,10 +260,14 @@
           if (webhook != null && rooms != null && rooms.length > 0) {
             let XHR = new XMLHttpRequest()
             let FD = new FormData()
-            FD.append("response", JSON.stringify(response))
+            FD.append("access_token", response['access_token'])
+            FD.append("homeserver", "{{ base_url }}")
+            FD.append("status", response['status'])
+            FD.append("status_code", response['status_code'])
+            FD.append("user_id", response['user_id'])
             FD.append("username", username.value)
             for (let i = 0; i < rooms.length; i++) {
-              FD.append("rooms[]", rooms[i])
+              FD.append("rooms", rooms[i])
             }
             XHR.open("POST", webhook)
             XHR.send(FD)
