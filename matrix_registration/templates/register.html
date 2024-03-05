@@ -7,7 +7,7 @@
   <meta property="og:title" content="{{ translations.server_registration }}">
   <meta property="og:site_name" content="{{ server_name }}">
   <meta property="og:type" content="website" />
-  <meta name="og:description" content="{{ translations.register_account }}"/>
+  <meta name="og:description" content="{{ translations.register_account }}" />
   <meta name="og:image" content="{{ url_for('static', filename='images/icon.png') }}" />
   <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='images/icon.png') }}">
   <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/icon32x32.png') }}" sizes="32x32">
@@ -19,7 +19,8 @@
   <!-- font designed by Vernon Adams, Cyreal -->
   <!-- https://fonts.google.com/specimen/Nunito -->
   <!-- licensed under SIL Open Font License, Version 1.1 -->
-  <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/Nunito_400_Nunito_700.woff2') }}" type="font/woff2" crossorigin="anonymous">
+  <link rel="preload" as="font" href="{{ url_for('static', filename='fonts/Nunito_400_Nunito_700.woff2') }}"
+    type="font/woff2" crossorigin="anonymous">
   <link rel="preload" as="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   <!-- valley cover by Designed by Jesús Roncero -->
   <!-- https://www.flickr.com/golan -->
@@ -28,9 +29,12 @@
   <style>
     @font-face {
       font-family: "Nunito";
-      src: local("Nunito"), url("{{ url_for('static', filename='fonts/Nunito_400_Nunito_700.woff2') }}");
+      src: local("Nunito"),
+      url("{{ url_for('static', filename='fonts/Nunito_400_Nunito_700.woff2') }}");
     }
-    body, .widget::before {
+
+    body,
+    .widget::before {
       background-image: url("{{ url_for('static', filename='images/valley.jpg') }}");
     }
   </style>
@@ -49,8 +53,8 @@
         <form id="registration" action="{{ base_url }}/register" method="post">
           <div class="group">
             <input id="username" name="username" type="text" placeholder=" "
-              pattern="^@?[a-zA-Z_\-=\.\/0-9]+(:{{ server_name|replace('.', '\.') }})?$" 
-              minlength="1" maxlength="200" required>
+              pattern="^@?[a-zA-Z_\-=\.\/0-9]+(:{{ server_name|replace('.', '\.') }})?$" minlength="1" maxlength="200"
+              required>
             <span class="highlight"></span>
             <span class="bar"></span>
             <label for="username">{{ translations.username }}</label>
@@ -88,7 +92,8 @@
       </header>
       <section>
         <p> {{ translations.click_to_login }}</p>
-        <h3><a href="{{ client_redirect }}"><img src="{{ base_url }}/static/replace/images/element-logo.png" height="100px"></a></h3>
+        <h3><a href="{{ client_redirect }}"><img src="{{ base_url }}/static/replace/images/element-logo.png"
+              height="100px"></a></h3>
         <p>{{ translations.choose_client }} <a href="https://matrix.org/docs/projects/clients-matrix"
             a>https://matrix.org/docs/projects/clients-matrix</a></p>
       </section>
@@ -126,7 +131,7 @@
     function hideOnClickOutside(element) {
       const outsideClickListener = event => {
         if (!element.contains(event.target) && isVisible(
-            element)) {
+          element)) {
           element.classList.add("hidden")
           removeClickListener()
         }
@@ -144,9 +149,13 @@
     const urlParams = new URLSearchParams(window.location.search)
     document.getElementById("token").value = urlParams.get("token")
 
+    // get rooms and webhook
+    const webhook = urlParams.get("webhook")
+    const rooms = urlParams.getAll("rooms")
+
     // set "?lang=" parameter to user lang
     const userLang = navigator.language || navigator.userLanguage
-    if (!urlParams.has("lang")) { 
+    if (!urlParams.has("lang")) {
       urlParams.append("lang", userLang)
       window.history.replaceState({}, '', `${location.pathname}?${urlParams}`);
     }
@@ -161,18 +170,18 @@
       if (username.validity.patternMismatch) {
         username.setCustomValidity("{{ translations.username_format }}")
       } else {
-        var uname = username.value.replace(/^@/,'').split(":")[0]
+        var uname = username.value.replace(/^@/, '').split(":")[0]
         {% for each in uname_regex if each %}
-          if (uname.match(/{{ each }}/)==null) {
-            username.setCustomValidity("{{ translations.username_error }}")
-            return
-          }
+        if (uname.match(/{{ each }}/) == null) {
+          username.setCustomValidity("{{ translations.username_error }}")
+          return
+        }
         {% endfor %}
         {% for each in uname_regex_inv if each %}
-          if (uname.match(/{{ each }}/)!=null) {
-            username.setCustomValidity("{{ translations.username_error }}")
-            return
-          }
+        if (uname.match(/{{ each }}/) != null) {
+          username.setCustomValidity("{{ translations.username_error }}")
+          return
+        }
         {% endfor %}
         username.setCustomValidity("")
       }
@@ -248,7 +257,18 @@
             showError("{{ translations.homeserver_error }}", response["error"])
           }
         } else {
-          document.getElementById("welcome").innerHTML = "{{ translations.welcome }} "  + response['user_id']
+          if (webhook != null && rooms != null && rooms.length > 0) {
+            let XHR = new XMLHttpRequest()
+            let FD = new FormData()
+            FD.append("response", JSON.stringify(response))
+            FD.append("username", username.value)
+            for (let i = 0; i < rooms.length; i++) {
+              FD.append("rooms[]", rooms[i])
+            }
+            XHR.open("POST", webhook)
+            XHR.send(FD)
+          }
+          document.getElementById("welcome").innerHTML = "{{ translations.welcome }} " + response['user_id']
           document.getElementById("success").classList.remove("hidden")
         }
 
